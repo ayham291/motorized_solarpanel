@@ -1,5 +1,5 @@
-#include "endpos.h"
-#include "Arduino.h"
+#include <Arduino.h>
+#include "EndPos.h"
 
 // initialize both inductive sensors
 void EndPos::init_sensors(uint8_t pinUp, uint8_t pinDown)
@@ -8,13 +8,13 @@ void EndPos::init_sensors(uint8_t pinUp, uint8_t pinDown)
     pinMode(pinUp, OUTPUT);
     pinMode(pinDown, OUTPUT);
     // set the red values to the appropriate variables
-    this.PosPhiUP = digitalRead(pinUp);
-    this.PosPhiDown = digitalRead(pinDown);
+    this->PosPhiUp = digitalRead(pinUp);
+    this->PosPhiDown = digitalRead(pinDown);
 }
 // getter functions
 int EndPos::getPosPhiUp()
 {
-    return PosPhiUP;
+    return PosPhiUp;
 }
 int EndPos::getPosPhiDown()
 {
@@ -26,7 +26,7 @@ int EndPos::getPosPhiDown()
 void EndPos::Serial_Print()
 {
     Serial.print("the up sensor is: ");
-    Serial.println(PosPhiUP);
+    Serial.println(PosPhiUp);
     Serial.print("the down sensor is: ");
     Serial.println(PosPhiDown);
 }
