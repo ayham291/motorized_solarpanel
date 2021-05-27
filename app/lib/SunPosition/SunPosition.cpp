@@ -1,55 +1,57 @@
-#include <Arduino.h>
-#include <RTClib.h>
 #include <SunPosition.h>
 
 const float azimuth[] = // 5:00 -> 6:00 -> 15min step
     {
-        62.00, 65.00, 67.50, 71.00, 74.00,
+        62, 65, 67.50, 71, 74,
         // 6:15
-        76.00, 78.00, 82.00, 85.00,
+        76, 78, 82, 85,
         // 7:15
-        88.00, 91.00, 94.00, 96.00,
+        88, 91, 94, 96,
         // 8:15
-        100.00, 103.00, 106.00, 110.00,
+        100, 103, 106, 110,
         // 9:15
-        114.00, 118.00, 122.00, 127.00,
+        114, 118, 122, 127,
         // 10:15
-        133.00, 137.00, 143.00, 149.00,
+        133, 137, 143, 149,
         // 11:15
-        155.00, 161.00, 169.00, 177.00,
+        155, 161, 169, 177,
         // 12:15
-        183.00, 190.00, 196.00, 203.00,
+        183, 190, 196, 203,
         // 13:15
-        210.00, 216.00, 221.00, 227.00,
+        210, 216, 221, 227,
         // 14:15
-        232.00, 236.00, 242.00, 245.00,
+        232, 236, 242, 245,
         // 15:15
-        249.00, 253.00, 256.00, 259.00,
+        249, 253, 256, 259,
         // 16:15
-        263.00, 266.00, 269.00, 272.00,
+        263, 266, 269, 272,
         // 17:15
-        275.00, 277.00, 280.00, 283.00,
+        275, 277, 280, 283,
         // 18:15
-        286.00, 289.00, 291.00, 294.00,
+        286, 289, 291, 294,
         // 19:15
-        296.00, 300.00, 303.00, 305.00
+        296, 300, 303, 305
         // 20:15
 };
+
+void SonnenStand::init_time()
+{
+    this->rtc.begin();
+    this->time = rtc.now();
+}
 
 // calc index -> get azimuth of the claced time
 int SonnenStand::get_arr_pos()
 {
-    rtc.begin();
-    time = rtc.now();
-    int hr = time.hour();
-    int min = time.minute();
+    int hr = this->time.hour();
+    int min = this->time.minute();
     min = min / 15;
     hr = ((hr - 5) * 4) + 1;
     return hr + min;
 }
 
 // return the azimuth value of the current time (now azimuth)
-float SonnenStand::get_azimuth(int arr_pos)
+int SonnenStand::get_azimuth(int arr_pos)
 {
     // check if it's after 20:00 or before 05:00
     arr_pos = arr_pos * (time.hour() > 5) * (time.hour() < 20) + 0 * (time.hour() > 20);

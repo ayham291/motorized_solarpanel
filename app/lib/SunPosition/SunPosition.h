@@ -8,8 +8,9 @@ private:
     RTC_DS3231 rtc;
     DateTime time;
 public:
+    void init_time();
     int get_arr_pos();
-    float get_azimuth(int arr_pos);
+    int get_azimuth(int arr_pos);
 
 };
 
