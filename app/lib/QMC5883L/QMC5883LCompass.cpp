@@ -52,9 +52,9 @@ OVER SAMPLE RATIO (OSR)
 
 
 
-#include "Arduino.h"
-#include "QMC5883LCompass.h"
+#include <Arduino.h>
 #include <Wire.h>
+#include "QMC5883LCompass.h"
 
 QMC5883LCompass::QMC5883LCompass() {
 }
