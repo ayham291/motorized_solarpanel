@@ -4,21 +4,26 @@
 // initialize both inductive sensors
 void EndPos::init_sensors(uint8_t pinUp, uint8_t pinDown)
 {
-    // set both sensors as Digital output
-    pinMode(pinUp, OUTPUT);
-    pinMode(pinDown, OUTPUT);
+    // set both sensors as Digital inputs
+    pinMode(pinUp, INPUT);
+    pinMode(pinDown, INPUT);
+    this->pinUp=pinUp;
+    this->pinDown=pinDown;
+}
+void EndPos::read_pins()
+{
     // set the red values to the appropriate variables
-    this->PosPhiUp = digitalRead(pinUp);
-    this->PosPhiDown = digitalRead(pinDown);
+    this->PosPhiUp = digitalRead(this->pinUp);
+    this->PosPhiDown = digitalRead(this->pinDown);
 }
 // getter functions
 int EndPos::getPosPhiUp()
 {
-    return PosPhiUp;
+    return this->PosPhiUp;
 }
 int EndPos::getPosPhiDown()
 {
-    return PosPhiDown;
+    return this->PosPhiDown;
 }
 //
 
@@ -26,7 +31,9 @@ int EndPos::getPosPhiDown()
 void EndPos::Serial_Print()
 {
     Serial.print("the up sensor is: ");
-    Serial.println(PosPhiUp);
+    Serial.println(this->PosPhiUp);
+    delay(600);
     Serial.print("the down sensor is: ");
-    Serial.println(PosPhiDown);
+    Serial.println(this->PosPhiDown);
+    delay(600);
 }
