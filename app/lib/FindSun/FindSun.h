@@ -30,12 +30,13 @@ class Find_Sun
 private:
     QMC5883LCompass compass;
     SonnenStand SunPos;
-    float current_azimuth;
-    float offset;
+    int Sun_at_azimuth;
+    int current_azimuth;
+    int offset;
 public:
     void init_compass();
-    float get_current_azimuth();
-    float offest_to_sun();
+    int get_current_azimuth();
+    int offest_to_sun();
     int if_offset();
 };
 
