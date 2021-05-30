@@ -4,8 +4,9 @@
 #include <Arduino.h>
 #include <SunPosition.h>
 #include <QMC5883LCompass.h>
-#include <math.h>
-
+#include <SunPosition.h>
+#include <MoveMotors.h>
+#include <EndPos.h>
 
 #define Mode_Standby 0b00000000
 #define Mode_Continuous 0b00000001
@@ -23,8 +24,6 @@
 #define OSR_128 0b10000000
 #define OSR_64 0b11000000
 
-
-
 class Find_Sun
 {
 private:
@@ -33,11 +32,14 @@ private:
     int Sun_at_azimuth;
     int current_azimuth;
     int offset;
+    Motor tiltpanel;
+    EndPos endPos;
+
 public:
     void init_compass();
     int get_current_azimuth();
     int offest_to_sun();
-    int if_offset();
+    void check_tilt();
 };
 
 #endif
