@@ -5,7 +5,21 @@
 #include <RTClib.h>
 #include <Wire.h>
 #include <FindSun.h>
+#include <ESP8266WiFi.h>
 
+char ssid[] = "ard";
+char pass[] = "maxardayham";
+int status = WL_IDLE_STATUS;
+char server[] = "192.168.8.102";
+String postData_k;
+String postData_d;
+String postData;
+
+WiFiClient client;
+
+int az;
+float diode;
+int offset;
 EndPos endPos;
 Motor turnTable;
 Motor tiltPanel;
@@ -14,54 +28,56 @@ Find_Sun FindSun;
 void setup()
 {
   Serial.begin(9600);
-  endPos.init_sensors(D6, D5);
+
   turnTable.init_motor(D0, D3, 1);
   tiltPanel.init_motor(D7, D4, 2);
-  sunpos.init_time();
   FindSun.init_compass();
-  pinMode(A0, INPUT);
+  WiFi.begin(ssid, pass);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    Serial.println("Attempting to connect to Network named: ");
+    Serial.println(ssid);
+    delay(3000);
+  }
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+  pinMode(A0, OUTPUT);
 }
 
 void loop()
 {
-  FindSun.get_current_azimuth();
   sunpos.get_azimuth(sunpos.get_arr_pos());
-  if(FindSun.offest_to_sun()<-2)
+  az = FindSun.get_current_azimuth();
+  diode = (analogRead(A0)*5)/1024.0;
+  offset = FindSun.offest_to_sun();
+
+  if (FindSun.offest_to_sun() < -2)
     turnTable.rotate(RIGHT);
-  else if(FindSun.offest_to_sun()>2)
+  else if (FindSun.offest_to_sun() > 2)
     turnTable.rotate(LEFT);
-  else if (FindSun.offest_to_sun()>=2 || FindSun.offest_to_sun()>=-2)
+  else if (FindSun.offest_to_sun() >= 2 || FindSun.offest_to_sun() >= -2)
     turnTable.switch_pwr(OFF);
-  // Serial.print("KOMPASS WERT: ");
-  // Serial.println(FindSun.get_current_azimuth());
-  // delay(1000);
 
-  // Serial.print("SOllWERT: ");
-  // Serial.println(sunpos.get_azimuth(sunpos.get_arr_pos()));
-  // delay(1000);
+  FindSun.check_tilt();
 
-  // Serial.print("OFFSET: ");
-  // Serial.println(FindSun.offest_to_sun());
-  // delay(1000);
-
-  
-  Serial.println(analogRead(A0));
-
-
-  // endPos.read_pins();
-  // if (endPos.getPosPhiUp() == 1 && endPos.getPosPhiDown() == 1)
-  // {
-  //   tiltPanel.switch_pwr(OFF);
-  //   tiltPanel.rotate(DOWN); // auch on
-  // }
-  // else if (endPos.getPosPhiDown() == 0 && endPos.getPosPhiUp() == 0)
-  // {
-  //   tiltPanel.switch_pwr(OFF);
-  //   tiltPanel.rotate(UP);
-  // }
-  // else
-  // {
-  //   tiltPanel.switch_pwr(OFF);
-  // }
-  // Serial.println(sunpos.get_azimuth(sunpos.get_arr_pos()));
+  postData = "kompass=" + (String)az;
+  postData += "&diode=" + (String)diode;
+  postData += "&offset=" + (String)offset;
+  if (client.connect(server, 9887))
+  {
+    client.println("POST / HTTP/1.1");
+    client.println("Content-Type: application/x-www-form-urlencoded");
+    client.print("Content-Length: ");
+    client.println(postData.length());
+    client.println();
+    client.print(postData);
+  }
+  if (client.connected())
+  {
+    client.stop();
+  }
+  delay(100);
 }
