@@ -32,13 +32,13 @@ void setup()
   turnTable.init_motor(D0, D3, 1);
   tiltPanel.init_motor(D7, D4, 2);
   FindSun.init_compass();
-  WiFi.begin(ssid, pass);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    Serial.println("Attempting to connect to Network named: ");
-    Serial.println(ssid);
-    delay(3000);
-  }
+  // WiFi.begin(ssid, pass);
+  // while (WiFi.status() != WL_CONNECTED)
+  // {
+  //   Serial.println("Attempting to connect to Network named: ");
+  //   Serial.println(ssid);
+  //   delay(3000);
+  // }
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
   IPAddress ip = WiFi.localIP();
@@ -63,21 +63,21 @@ void loop()
 
   FindSun.check_tilt();
 
-  postData = "kompass=" + (String)az;
-  postData += "&diode=" + (String)diode;
-  postData += "&offset=" + (String)offset;
-  if (client.connect(server, 9887))
-  {
-    client.println("POST / HTTP/1.1");
-    client.println("Content-Type: application/x-www-form-urlencoded");
-    client.print("Content-Length: ");
-    client.println(postData.length());
-    client.println();
-    client.print(postData);
-  }
-  if (client.connected())
-  {
-    client.stop();
-  }
-  delay(100);
+  // postData = "kompass=" + (String)az;
+  // postData += "&diode=" + (String)diode;
+  // postData += "&offset=" + (String)offset;
+  // if (client.connect(server, 9887))
+  // {
+  //   client.println("POST / HTTP/1.1");
+  //   client.println("Content-Type: application/x-www-form-urlencoded");
+  //   client.print("Content-Length: ");
+  //   client.println(postData.length());
+  //   client.println();
+  //   client.print(postData);
+  // }
+  // if (client.connected())
+  // {
+  //   client.stop();
+  // }
+  // delay(100);
 }
