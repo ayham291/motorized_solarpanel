@@ -41,7 +41,7 @@ private:
 public:
     void init_compass();
     int get_current_azimuth();
-    int offest_to_sun();
+    int offset_to_Sun();
     void check_tilt();
     int check_rotation();
 };

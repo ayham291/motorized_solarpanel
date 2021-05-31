@@ -54,7 +54,7 @@ void loop()
   sunpos.get_azimuth(sunpos.get_arr_pos());
   az = FindSun.get_current_azimuth();
   diode = (analogRead(A0) * 5) / 1024.0;
-  offset = FindSun.offest_to_sun();
+  offset = FindSun.offset_to_Sun();
 
   check_rotation=FindSun.check_rotation();
 
