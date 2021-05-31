@@ -1,6 +1,6 @@
 #include <FindSun.h>
 
-#define PEAKVALUE 350
+#define PEAKVALUE 300
 
 // init the sensor
 void Find_Sun::init_compass()
@@ -12,6 +12,7 @@ void Find_Sun::init_compass()
     SunPos.init_time();
     pinMode(A0, INPUT);
     tiltpanel.init_motor(D7, D4, 2);
+    turnTable.init_motor(D0, D3, 1);
 }
 // gets the azimuth value of the sensor
 int Find_Sun::get_current_azimuth()
@@ -39,7 +40,7 @@ void Find_Sun::check_tilt()
     {
         if (light_intens > PEAKVALUE)
         {
-            if (endPos.getPosPhiUp() == 1 && endPos.getPosPhiDown() == 1)
+            if (endPos.getPosPhiUp() == 1 && endPos.getPosPhiDown() == 1) //Pos=Tilt Max
             {
                 tiltpanel.switch_pwr(OFF);
                 tiltpanel.rotate(DOWN);
@@ -48,10 +49,11 @@ void Find_Sun::check_tilt()
                 {
                     endPos.read_pins();
                     light_intens = analogRead(A0);
+                    turnTable.switch_pwr(OFF);
                     delay(10);
                 }
             }
-            else if (endPos.getPosPhiUp() == 0 && endPos.getPosPhiDown() == 0)
+            else if (endPos.getPosPhiUp() == 0 && endPos.getPosPhiDown() == 0) // Pos=Tilt Min
             {
                 tiltpanel.switch_pwr(OFF);
                 tiltpanel.rotate(UP);
@@ -59,6 +61,7 @@ void Find_Sun::check_tilt()
                 {
                     endPos.read_pins();
                     light_intens = analogRead(A0);
+                    turnTable.switch_pwr(OFF);
                     delay(10);
                 }
             }
@@ -93,4 +96,28 @@ void Find_Sun::check_tilt()
             tiltpanel.rotate(UP);
         }
     }
+}
+
+int Find_Sun::check_rotation()
+{
+    SunPos.get_azimuth(SunPos.get_arr_pos());
+    get_current_azimuth();
+
+    if (offest_to_sun() < -TOLERANCE)
+    {
+        turnTable.rotate(RIGHT);
+        return 1;
+    }
+    else if (offest_to_sun() > TOLERANCE)
+    {
+        turnTable.rotate(LEFT);
+        return 1;
+    }
+
+    else if (offest_to_sun() >= TOLERANCE || offest_to_sun() >= -TOLERANCE)
+    {
+        turnTable.switch_pwr(OFF);
+        return 0;
+    }
+    return 1;
 }
