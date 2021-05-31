@@ -1,6 +1,6 @@
 #include <FindSun.h>
 
-#define PEAKVALUE 350
+#define PEAKVALUE 300
 
 // init the sensor
 void Find_Sun::init_compass()
@@ -21,7 +21,29 @@ int Find_Sun::get_current_azimuth()
     this->current_azimuth = compass.getAzimuth();
     return current_azimuth;
 }
-
+void Find_Sun::start_pos()
+{
+    endPos.read_pins();
+    tiltpanel.switch_pwr(OFF);
+    turnTable.switch_pwr(OFF);
+    while (endPos.getPosPhiDown() == 1)
+    {
+        endPos.read_pins();
+        tiltpanel.rotate(DOWN);
+        Serial.println("A");
+        delay(10);
+    }
+    tiltpanel.switch_pwr(OFF);
+    while (get_current_azimuth() != 0)
+    {
+        turnTable.rotate(LEFT);
+        get_current_azimuth();
+        Serial.println("X");
+        delay(10);
+    }
+    turnTable.switch_pwr(OFF);
+    delay(500);
+}
 // calc the offset to sun then sent to the motors
 int Find_Sun::offset_to_Sun()
 {
@@ -36,9 +58,9 @@ void Find_Sun::check_tilt()
     int light_intens;
     light_intens = analogRead(A0);
     int time_var = SunPos.get_arr_pos();
-    if (time_var >= 19 && time_var <= 41)  // time betwee 9:30 and 15:00 -> Adustable time
+    if (time_var >= 19 && time_var <= 41) // time betwee 9:30 and 15:00 -> Adustable time
     {
-        if (light_intens > PEAKVALUE)  // light inensity not enough
+        if (light_intens > PEAKVALUE) // light inensity not enough
         {
             if (endPos.getPosPhiUp() == 1 && endPos.getPosPhiDown() == 1) //Pos=Tilt Max
             {
@@ -50,6 +72,7 @@ void Find_Sun::check_tilt()
                     endPos.read_pins();
                     light_intens = analogRead(A0);
                     turnTable.switch_pwr(OFF);
+                    Serial.println("DOWN");
                     delay(10);
                 }
             }
@@ -62,12 +85,13 @@ void Find_Sun::check_tilt()
                     endPos.read_pins();
                     light_intens = analogRead(A0);
                     turnTable.switch_pwr(OFF);
+                    Serial.println("UP");
                     delay(10);
                 }
             }
             else if (endPos.getPosPhiUp() == 0 && endPos.getPosPhiDown() == 1)
             {
-                if (time_var >= 34)  // if light intensity is lost and its before true noon -> search up
+                if (time_var >= 34) // if light intensity is lost and its before true noon -> search up
                 {
                     tiltpanel.switch_pwr(OFF);
                     tiltpanel.rotate(UP);
@@ -81,7 +105,7 @@ void Find_Sun::check_tilt()
         }
         else
         {
-            delay(500); // delay stop driving after light intensity reached to go into better tolerance
+            delay(1000); // delay stop driving after light intensity reached to go into better tolerance
             tiltpanel.switch_pwr(OFF);
         }
     }
@@ -102,7 +126,7 @@ void Find_Sun::check_tilt()
 int Find_Sun::check_rotation()
 {
     SunPos.get_azimuth(SunPos.get_arr_pos()); //update target angle
-    get_current_azimuth(); //update current angle
+    get_current_azimuth();                    //update current angle
 
     if (offset_to_Sun() < -TOLERANCE) //Angle is not ok
     {

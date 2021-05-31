@@ -47,6 +47,7 @@ void setup()
   Serial.print("IP Address: ");
   Serial.println(ip);
   pinMode(A0, OUTPUT);
+  // FindSun.start_pos();
 }
 
 void loop()
@@ -56,12 +57,12 @@ void loop()
   diode = (analogRead(A0) * 5) / 1024.0;
   offset = FindSun.offset_to_Sun();
 
-  check_rotation=FindSun.check_rotation();
+  // check_rotation=FindSun.check_rotation();
 
   Serial.println(analogRead(A0));
 
-  if(check_rotation==0)
-    FindSun.check_tilt();
+  // if(check_rotation==0)
+  //   FindSun.check_tilt();
 
   // postData = "kompass=" + (String)az;
   // postData += "&diode=" + (String)diode;
