@@ -10,6 +10,7 @@
 char ssid[] = "ard";
 char pass[] = "maxardayham";
 int status = WL_IDLE_STATUS;
+int check_rotation=1;
 char server[] = "192.168.8.102";
 String postData_k;
 String postData_d;
@@ -18,6 +19,7 @@ String postData;
 WiFiClient client;
 
 int az;
+
 float diode;
 int offset;
 EndPos endPos;
@@ -51,17 +53,15 @@ void loop()
 {
   sunpos.get_azimuth(sunpos.get_arr_pos());
   az = FindSun.get_current_azimuth();
-  diode = (analogRead(A0)*5)/1024.0;
+  diode = (analogRead(A0) * 5) / 1024.0;
   offset = FindSun.offest_to_sun();
 
-  if (FindSun.offest_to_sun() < -2)
-    turnTable.rotate(RIGHT);
-  else if (FindSun.offest_to_sun() > 2)
-    turnTable.rotate(LEFT);
-  else if (FindSun.offest_to_sun() >= 2 || FindSun.offest_to_sun() >= -2)
-    turnTable.switch_pwr(OFF);
+  check_rotation=FindSun.check_rotation();
 
-  FindSun.check_tilt();
+  Serial.println(analogRead(A0));
+
+  if(check_rotation==0)
+    FindSun.check_tilt();
 
   // postData = "kompass=" + (String)az;
   // postData += "&diode=" + (String)diode;
