@@ -8,6 +8,8 @@
 #include <MoveMotors.h>
 #include <EndPos.h>
 
+#define TOLERANCE 2
+
 #define Mode_Standby 0b00000000
 #define Mode_Continuous 0b00000001
 // Output data rate
@@ -33,6 +35,7 @@ private:
     int current_azimuth;
     int offset;
     Motor tiltpanel;
+    Motor turnTable;
     EndPos endPos;
 
 public:
@@ -40,6 +43,7 @@ public:
     int get_current_azimuth();
     int offest_to_sun();
     void check_tilt();
+    int check_rotation();
 };
 
 #endif
