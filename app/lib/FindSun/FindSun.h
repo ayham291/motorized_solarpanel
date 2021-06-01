@@ -8,7 +8,7 @@
 #include <MoveMotors.h>
 #include <EndPos.h>
 
-#define TOLERANCE 2
+#define TOLERANCE 3
 
 #define Mode_Standby 0b00000000
 #define Mode_Continuous 0b00000001
@@ -44,6 +44,7 @@ public:
     int offset_to_Sun();
     void check_tilt();
     int check_rotation();
+    void start_pos();
 };
 
 #endif
