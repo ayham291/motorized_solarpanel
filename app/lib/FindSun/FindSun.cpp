@@ -30,7 +30,7 @@ void Find_Sun::start_pos()
     {
         endPos.read_pins();
         tiltpanel.rotate(DOWN);
-        Serial.println("A");
+        // Serial.println("A");
         delay(10);
     }
     tiltpanel.switch_pwr(OFF);
@@ -38,7 +38,7 @@ void Find_Sun::start_pos()
     {
         turnTable.rotate(LEFT);
         get_current_azimuth();
-        Serial.println("X");
+        // Serial.println("X");
         delay(10);
     }
     turnTable.switch_pwr(OFF);
@@ -72,7 +72,7 @@ void Find_Sun::check_tilt()
                     endPos.read_pins();
                     light_intens = analogRead(A0);
                     turnTable.switch_pwr(OFF);
-                    Serial.println("DOWN");
+                    // Serial.println("DOWN");
                     delay(10);
                 }
             }
@@ -85,7 +85,7 @@ void Find_Sun::check_tilt()
                     endPos.read_pins();
                     light_intens = analogRead(A0);
                     turnTable.switch_pwr(OFF);
-                    Serial.println("UP");
+                    // Serial.println("UP");
                     delay(10);
                 }
             }
