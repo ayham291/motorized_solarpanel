@@ -18,8 +18,8 @@ String postData;
 
 WiFiClient client;
 int ticks = 0;
-int status = 1;
-
+int gen_status = 1;
+String endpos_val;
 int az;
 float diode;
 int offset;
@@ -36,7 +36,7 @@ Find_Sun FindSun;
 void setup()
 {
   Serial.begin(9600);
-  rtc_temp.only.begin();
+  rtc_temp_only.begin();
   turnTable.init_motor(D0, D3, 1);
   tiltPanel.init_motor(D7, D4, 2);
   FindSun.init_compass();
@@ -71,14 +71,21 @@ void loop()
   if(check_rotation==0)
     FindSun.check_tilt();
   
-  if(ticks=5)
+  if(ticks==5)
   {
+    if(endPos.getPosPhiDown()==0)
+      endpos_val = "Down";
+    else if(endPos.getPosPhiUp()==1)
+      endpos_val = "Up";
+    else
+      endpos_val = "Tilted";
+    
     postData = "kompass=" + (String)az;
     postData += "&diode=" + (String)diode;
     postData += "&offset=" + (String)offset;
     postData += "&temperature" + (String)temperature;
-    postData += "&endpost=" + (String)endposition;
-    postData += "&status=" + (String)status;
+    postData += "&endpost=" + (String)endpos_val;
+    postData += "&status=" + (String)gen_status;
     postData += "&tiltPanel=" + (String)tiltPanel.get_rot();
     postData += "&turnTable=" + (String)turnTable.get_rot();
     
@@ -98,5 +105,5 @@ void loop()
     ticks = 0;
     delay(100);
   }
-  status = 0;
+  gen_status = 0;
 }
