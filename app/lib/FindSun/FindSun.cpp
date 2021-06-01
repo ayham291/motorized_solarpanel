@@ -1,6 +1,6 @@
 #include <FindSun.h>
 
-#define PEAKVALUE 300
+#define PEAKVALUE 350
 
 // init the sensor
 void Find_Sun::init_compass()

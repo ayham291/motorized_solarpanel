@@ -65,6 +65,7 @@ void loop()
   offset = FindSun.offset_to_Sun();
   temperature = rtc_temp_only.getTemperature();
 
+
   check_rotation=FindSun.check_rotation();
 
   if(check_rotation==0)
