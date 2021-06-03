@@ -42,22 +42,6 @@ void Motor::rotate(int dir)
         this->dir = DOWN;
         switch_pwr(ON);
     }
-
-/*     switch(dir) */
-/*     { */
-/*         case 0: */
-/*             pinMode(this->dir_pin, OUTPUT); */
-/*             digitalWrite(this->dir_pin, LOW); */
-/*             this->rot = dir; */
-/*             break; */
-/*         case 1: */
-/*             pinMode(this->dir_pin, OUTPUT); */
-/*             digitalWrite(this->dir_pin, HIGH); */
-/*             this->rot = dir; */
-/*             break; */
-/*         default: */
-/*             break; */
-/*     } */
 }
 // getter methods
 int Motor::get_pwr()
