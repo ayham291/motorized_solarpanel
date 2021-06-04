@@ -1,26 +1,21 @@
 #include <Arduino.h>
-#include <EndPos.h>
 #include <MoveMotors.h>
-#include <SunPosition.h>
-#include <RTClib.h>
 #include <Wifi.h>
-#include <Wire.h>
 #include <FindSun.h>
-#include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h>
-#include <PCF8591.h>
 
 int check_rotation = 1;
 
-int ticks = 0;
-int gen_status = 1;
-
 Find_Sun FindSun;
 Wireless client;
+Motor turnTable;
+Motor tiltPanel;
 
 void setup()
 {
   Serial.begin(9600);
+  turnTable.init_motor(D0, D3, 1);
+  tiltPanel.init_motor(D7, D4, 2);
+  FindSun.init_compass();
   client.Wifi_setup();
   FindSun.start_pos();
 }
@@ -28,11 +23,8 @@ void setup()
 void loop()
 {
   check_rotation = FindSun.check_rotation();
-
   if (check_rotation == 0)
     FindSun.check_tilt();
-
   client.send_Data();
-  
-  gen_status = 0;
+  client.gen_Status();
 }
