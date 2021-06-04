@@ -1,6 +1,7 @@
-#include <FindSun.h>
+#include "FindSun.h"
+#include <PCF8591.h>
 
-#define PEAKVALUE 350
+PCF8591 AD_Converter(0x48);
 
 // init the sensor
 void Find_Sun::init_compass()
@@ -13,6 +14,7 @@ void Find_Sun::init_compass()
     pinMode(A0, INPUT);
     tiltpanel.init_motor(D7, D4, 2);
     turnTable.init_motor(D0, D3, 1);
+    AD_Converter.begin();
 }
 // gets the azimuth value of the sensor
 int Find_Sun::get_current_azimuth()
@@ -55,60 +57,27 @@ int Find_Sun::offset_to_Sun()
 void Find_Sun::check_tilt()
 {
     endPos.read_pins();
-    int light_intens;
-    light_intens = analogRead(A0);
+    ldr0 = AD_Converter.analogRead(AIN0);
+    ldr1 = AD_Converter.analogRead(AIN1);
+    offset_adc = ldr1 - ldr0;
     int time_var = SunPos.get_arr_pos();
     if (time_var >= 19 && time_var <= 41) // time betwee 9:30 and 15:00 -> Adustable time
     {
-        if (light_intens > PEAKVALUE) // light inensity not enough
-        {
-            if (endPos.getPosPhiUp() == 1 && endPos.getPosPhiDown() == 1) //Pos=Tilt Max
-            {
-                tiltpanel.switch_pwr(OFF);
-                tiltpanel.rotate(DOWN);
-
-                while (endPos.getPosPhiDown() == 1 && light_intens > PEAKVALUE) // If light intensity is to low and upper end is reched -> search down
-                {
-                    endPos.read_pins();
-                    light_intens = analogRead(A0);
-                    turnTable.switch_pwr(OFF);
-                    // Serial.println("DOWN");
-                    delay(10);
-                }
-            }
-            else if (endPos.getPosPhiUp() == 0 && endPos.getPosPhiDown() == 0) // Pos=Tilt Min
+            if (endPos.getPosPhiUp() == 0 && offset_adc >= 10)
             {
                 tiltpanel.switch_pwr(OFF);
                 tiltpanel.rotate(UP);
-                while (endPos.getPosPhiUp() == 0 && light_intens > PEAKVALUE) // If light intensity is to low and down end is reched -> search up
-                {
-                    endPos.read_pins();
-                    light_intens = analogRead(A0);
-                    turnTable.switch_pwr(OFF);
-                    // Serial.println("UP");
-                    delay(10);
-                }
             }
-            else if (endPos.getPosPhiUp() == 0 && endPos.getPosPhiDown() == 1)
+            else if (endPos.getPosPhiDown() == 1 && offset_adc <= -10)
             {
-                if (time_var >= 34) // if light intensity is lost and its before true noon -> search up
-                {
-                    tiltpanel.switch_pwr(OFF);
-                    tiltpanel.rotate(UP);
-                }
-                else
-                {
-                    tiltpanel.switch_pwr(OFF); // if light intensity is lost and its after true noon -> search down
-                    tiltpanel.rotate(DOWN);
-                }
+                tiltpanel.switch_pwr(OFF);
+                tiltpanel.rotate(DOWN);
             }
-        }
-        else
-        {
-            delay(1000); // delay stop driving after light intensity reached to go into better tolerance
-            tiltpanel.switch_pwr(OFF);
-        }
+
+            else if (offset_adc < 10 || offset_adc > -10)
+                tiltpanel.switch_pwr(OFF);
     }
+
     else // Time before and after adustable time -> Tilt goto Max
     {
         if (endPos.getPosPhiUp() == 1)
@@ -145,4 +114,14 @@ int Find_Sun::check_rotation()
         return 0;
     }
     return 1;
+}
+int Find_Sun::get_ldr0()
+{
+    ldr0 = AD_Converter.analogRead(AIN0);
+    return ldr0;
+}
+int Find_Sun::get_ldr1()
+{
+    ldr1 = AD_Converter.analogRead(AIN1);
+    return ldr1;
 }

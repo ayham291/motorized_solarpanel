@@ -20,7 +20,7 @@ private:
     int dir;
     int pos;
     int pwr;
-    int rot;
+    char rot;
     EndPos endPos;
 public:
     void init_motor(uint8_t pwr_pin, uint8_t dir_pin, int pos);
