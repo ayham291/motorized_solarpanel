@@ -9,6 +9,7 @@
 #include <EndPos.h>
 #include <PCF8591.h>
 
+
 #define TOLERANCE 3
 
 #define Mode_Standby 0b00000000
@@ -41,6 +42,7 @@ private:
     Motor tiltpanel;
     Motor turnTable;
     EndPos endPos;
+  
 public:
     void init_compass();
     int get_current_azimuth();

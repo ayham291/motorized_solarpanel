@@ -2,6 +2,7 @@
 #include <PCF8591.h>
 
 PCF8591 AD_Converter(0x48);
+
 // init the sensor
 void Find_Sun::init_compass()
 {
