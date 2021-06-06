@@ -9,13 +9,13 @@
 #include <Wire.h>
 #include <FindSun.h>
 #include <ESP8266WiFi.h>
-#include <WiFiClientSecure.h>
+// #include <WiFiClient.h>
 #include <PCF8591.h>
 
 class Wireless
 {
 private:
-    WiFiClientSecure client;
+    WiFiClient client;
     RTC_DS3231 rtc_temp_only;
     DateTime time;
     EndPos endPos;
