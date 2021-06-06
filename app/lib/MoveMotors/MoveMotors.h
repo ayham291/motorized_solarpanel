@@ -20,15 +20,15 @@ private:
     int dir;
     int pos;
     int pwr;
-    char rot;
+    int rot;
     EndPos endPos;
 public:
     void init_motor(uint8_t pwr_pin, uint8_t dir_pin, int pos);
     void switch_pwr(int pwr);
     void rotate(int dir);
     int get_pwr();
-    int get_dir();
-    char get_rot();
+    String get_dir();
+    String get_rot();
 };
 
 #endif

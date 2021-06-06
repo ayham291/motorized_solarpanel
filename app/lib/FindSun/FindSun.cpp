@@ -53,7 +53,7 @@ int Find_Sun::offset_to_Sun()
     offset = current_azimuth - Sun_at_azimuth;
     return offset;
 }
-//
+//9:30 =19 15:00 =41
 void Find_Sun::check_tilt()
 {
     endPos.read_pins();
@@ -61,24 +61,24 @@ void Find_Sun::check_tilt()
     ldr1 = AD_Converter.analogRead(AIN1);
     offset_adc = ldr1 - ldr0;
     int time_var = SunPos.get_arr_pos();
-    if (time_var >= 19 && time_var <= 41) // time betwee 9:30 and 15:00 -> Adustable time
+    if (time_var >= 5 && time_var <= 57) // 6:00 - 19:00 -> Daytime 
     {
-            if (endPos.getPosPhiUp() == 0 && offset_adc >= 10)
-            {
-                tiltpanel.switch_pwr(OFF);
-                tiltpanel.rotate(UP);
-            }
-            else if (endPos.getPosPhiDown() == 1 && offset_adc <= -10)
-            {
-                tiltpanel.switch_pwr(OFF);
-                tiltpanel.rotate(DOWN);
-            }
+        if (endPos.getPosPhiUp() == 0 && offset_adc >= 10)
+        {
+            tiltpanel.switch_pwr(OFF);
+            tiltpanel.rotate(UP);
+        }
+        else if (endPos.getPosPhiDown() == 1 && offset_adc <= -10)
+        {
+            tiltpanel.switch_pwr(OFF);
+            tiltpanel.rotate(DOWN);
+        }
 
-            else if (offset_adc < 10 || offset_adc > -10)
-                tiltpanel.switch_pwr(OFF);
+        else if (offset_adc < 10 || offset_adc > -10)
+            tiltpanel.switch_pwr(OFF);
     }
 
-    else // Time before and after adustable time -> Tilt goto Max
+    else // Nighttime -> Tilt goto Max
     {
         if (endPos.getPosPhiUp() == 1)
         {
