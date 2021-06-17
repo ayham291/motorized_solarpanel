@@ -10,7 +10,9 @@
 #include <PCF8591.h>
 
 
-#define TOLERANCE 6
+#define TOLERANCE_ROT 5
+#define TOLERANCE_LDR 10
+
 
 #define Mode_Standby 0b00000000
 #define Mode_Continuous 0b00000001
