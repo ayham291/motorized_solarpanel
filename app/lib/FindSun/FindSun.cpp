@@ -69,6 +69,7 @@ void Find_Sun::check_tilt()
             tiltpanel.rotate(UP);
         }
         else if (endPos.getPosPhiDown() == 1 && offset_adc <= -TOLERANCE_LDR)
+
         {
             tiltpanel.switch_pwr(OFF);
             tiltpanel.rotate(DOWN);
