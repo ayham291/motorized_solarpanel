@@ -2,6 +2,7 @@
 #include <PCF8591.h>
 
 PCF8591 AD_Converter(0x48);
+
 // init the sensor
 void Find_Sun::init_compass()
 {
@@ -52,7 +53,7 @@ int Find_Sun::offset_to_Sun()
     offset = current_azimuth - Sun_at_azimuth;
     return offset;
 }
-//
+//9:30 =19 15:00 =41
 void Find_Sun::check_tilt()
 {
     endPos.read_pins();
@@ -60,24 +61,25 @@ void Find_Sun::check_tilt()
     ldr1 = AD_Converter.analogRead(AIN1);
     offset_adc = ldr1 - ldr0;
     int time_var = SunPos.get_arr_pos();
-    if (time_var >= 19 && time_var <= 41) // time betwee 9:30 and 15:00 -> Adustable time
+    if (time_var >= 5 && time_var <= 57) // 6:00 - 19:00 -> Daytime
     {
-            if (endPos.getPosPhiUp() == 0 && offset_adc >= 10)
-            {
-                tiltpanel.switch_pwr(OFF);
-                tiltpanel.rotate(UP);
-            }
-            else if (endPos.getPosPhiDown() == 1 && offset_adc <= -10)
-            {
-                tiltpanel.switch_pwr(OFF);
-                tiltpanel.rotate(DOWN);
-            }
+        if (endPos.getPosPhiUp() == 0 && offset_adc >= TOLERANCE_LDR) 
+        {
+            tiltpanel.switch_pwr(OFF);      
+            tiltpanel.rotate(UP);
+        }
+        else if (endPos.getPosPhiDown() == 1 && offset_adc <= -TOLERANCE_LDR)
 
-            else if (offset_adc < 10 || offset_adc > -10)
-                tiltpanel.switch_pwr(OFF);
+        {
+            tiltpanel.switch_pwr(OFF);
+            tiltpanel.rotate(DOWN);
+        }
+
+        else if (offset_adc < TOLERANCE_LDR || offset_adc > -TOLERANCE_LDR)
+            tiltpanel.switch_pwr(OFF);
     }
 
-    else // Time before and after adustable time -> Tilt goto Max
+    else // Nighttime -> Tilt goto Max
     {
         if (endPos.getPosPhiUp() == 1)
         {
@@ -96,18 +98,18 @@ int Find_Sun::check_rotation()
     SunPos.get_azimuth(SunPos.get_arr_pos()); //update target angle
     get_current_azimuth();                    //update current angle
 
-    if (offset_to_Sun() < -TOLERANCE) //Angle is not ok
+    if (offset_to_Sun() < -TOLERANCE_ROT) //Angle is not ok
     {
         turnTable.rotate(RIGHT);
         return 1;
     }
-    else if (offset_to_Sun() > TOLERANCE) //Angle is not ok
+    else if (offset_to_Sun() > TOLERANCE_ROT) //Angle is not ok
     {
         turnTable.rotate(LEFT);
         return 1;
     }
 
-    else if (offset_to_Sun() >= TOLERANCE || offset_to_Sun() >= -TOLERANCE) //Angle is ok
+    else if (offset_to_Sun() >= TOLERANCE_ROT || offset_to_Sun() >= -TOLERANCE_ROT) //Angle is ok
     {
         turnTable.switch_pwr(OFF);
         return 0;
