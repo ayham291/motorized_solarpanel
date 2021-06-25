@@ -3,3 +3,27 @@ app/.vscode/.browse.c_cpp.db*
 app/.vscode/c_cpp_properties.json
 app/.vscode/launch.json
 app/.vscode/ipch
+
+
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+media
+
+# Backup files # 
+*.bak 
+
+# pyenv 
+.python-version 
+
+# Environments 
+.env 
+.venv 
+env/ 
+venv/ 
+ENV/ 
+env.bak/ 
+venv.bak/ 

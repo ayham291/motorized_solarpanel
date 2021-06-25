@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: arduinodb
+    image: postgres:alpine
+    restart: always
+    # env_file: .env
+    environment:
+     - POSTGRES_PASSWORD=Ayham_Arduino
+     - POSTGRES_USER=arduino
+     - POSTGRES_DB=arduinodb
+     - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+     - "6000:5432"
+    volumes:
+     - ./data/base:/var/lib/postgresql/data/pgdata
+    networks:
+      - internal_arduino
+
+
+  app:
+    container_name: arduino_app
+    # depends_on:
+    #   - db
+    build:
+      context: .
+    restart: always
+    volumes:
+      - ./data/app:/app
+      - ./data/app/static/:/vol/static
+    # env_file: .env
+    # environment:
+    #   - DEBUG=$DEBUG
+    #   - SECRET_KEY=$SECRET_KEY
+    #   - ALLOWED_HOSTS=$ALLOWED_HOSTS
+    #   - USER_EMAIL=$USER_EMAIL
+    #   - PW_EMAIL=$PW_EMAIL
+    #   - DB_NAME=$DB_NAME
+    #   - DB_USER=$DB_USER
+    #   - DB_PASS=$DB_PASS
+    #   - DB_HOST=db
+    networks:
+      - internal_arduino
+
+  proxy:
+    container_name: arduino_proxy
+    build:
+      context: ./proxy
+    restart: always
+    volumes:
+      - ./data/vol/static:/vol/static
+    depends_on:
+      - app
+    ports:
+      - "6192:8080"
+    networks:
+      - webserver_NPM
+      - internal_arduino
+
+networks:
+  webserver_NPM:
+    external: true
+  internal_arduino:
+    external: false
