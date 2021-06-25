@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  db:
+    container_name: arduino_db
+    image: 192.168.1.190:5000/ayham/ayhamcloud_db
+    restart: always
+    ports:
+     - "5433:5432"
+    volumes:
+     - ./data/base:/var/lib/postgresql/data/pgdata
+    networks:
+      - internal_arduino
+
+
+  app:
+    container_name: arduino_app
+    depends_on:
+      - db
+    image: 192.168.1.190:5000/ayham/ayhamcloud_app
+    volumes:
+      - ./data/app:/app
+    networks:
+      - internal_arduino
+
+  proxy:
+    container_name: arduino_proxy
+    image: 192.168.1.190:5000/ayham/ayhamcloud_proxy
+    depends_on:
+      - app
+     ports:
+      - "8181:8080"
+    networks:
+      - web
+      - internal_arduino
+
+networks:
+  web:
+    external: true
+  internal_arduino:
+    external: false

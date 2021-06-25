@@ -1,0 +1,179 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en" id="data">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Motorized Solarpanel | PMT2</title>
+
+	<meta name="author" content="Ayham Alhalaibi">
+
+	<link type="text/css" href="{% static 'ard_post_data/css/bootstrap.min.css' %}" rel="stylesheet">
+	<link type="text/css" href="{% static 'ard_post_data/css/style.css' %}" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<div style="margin:1cm;border:solid;border-radius:20px;"
+					class="text-muted text-center">
+					<h2>Motorized Solarpanel</h2>
+			</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>
+								Sensor
+							</th>
+							<th>
+								Value
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								Kompass
+							</td>
+							<td>
+								{{kompass}}
+							</td>
+						</tr>
+						<tr class="table-info">
+							<td>
+								Temperatur
+							</td>
+							<td>
+								{{temp}} &deg;C
+							</td>
+						</tr>
+                        <tr {%if offset.offset >= 3 or offset.offset <= -3 %}class="table-danger"{%endif%}>
+							<td>
+								Offset
+							</td>
+							<td>
+								{{offset}}
+							</td>
+						</tr>
+						<tr class="table-info">
+							<td>
+								LDR UP
+							</td>
+							<td>
+								{{ldrup}}
+							</td>
+						</tr>
+						<tr>
+							<td>
+								LDR LAY
+							</td>
+							<td>
+								{{ldrlay}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-6">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>
+								Information
+							</th>
+							<th>
+                                Status
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								Suns angle
+							</td>
+							<td>
+                                {{sunpos}}
+                            </td>
+						</tr>
+						<tr class="table-active">
+							<td>
+								Turn Table
+							</td>
+							<td>
+								{{turnTable}}
+							</td>
+						</tr>
+						<tr >
+							<td>
+								Tilt Panel
+							</td>
+							<td>
+								{{tiltPanel}}
+							</td>
+						</tr>
+						<tr class="table-active">
+							<td>
+								End Position
+							</td>
+							<td>
+								{{endposition}}
+							</td>
+						</tr>
+                        <tr {%if status.status == 0 %}class="table-success"{%else%}class="table-danger"{%endif%}>
+                            <td>
+								General Status
+							</td>
+							<td>
+								{{status}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	</div>
+	<div style="padding:1cm;z-index:2;" class="footer">
+		<a href="https://github.com/ayham291/motorized_solarpanel/">
+			<h5>Find me on Github</h5>
+		</a>
+		<a href="https://ei-wiki.oth-regensburg.de/wiki/Selbstausrichtendes_Solarpanel">
+			<h5>Find me on EI-Wiki OTH-Regensburg</h5>
+		</a>
+	</div>
+    <div id="last" style="z-index:0;" class="row">
+        <div class="col-md-12">
+            <div style="margin:1cm;"
+                class="text-muted text-center">
+                <h2>{% now "SHORT_DATETIME_FORMAT" %}</h2>
+        </div>
+        </div>
+    </div>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/scripts.js"></script>
+</body>
+<script>
+    var x = setInterval(function () {loadData("/", updateData);}, 1500);
+    function loadData(url, callback) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                callback.apply(xhttp);}};
+        xhttp.open("GET", url, true);
+        xhttp.send();}
+    function updateData() {
+        document.getElementById("data").innerHTML = this.responseText;}
+</script>
+</html>
