@@ -12,6 +12,7 @@ Wireless client;
 void setup()
 {
   Serial.begin(9600);
+  Serial.println("ASd")
   FindSun.init_compass();
   client.Wifi_setup();
 }
